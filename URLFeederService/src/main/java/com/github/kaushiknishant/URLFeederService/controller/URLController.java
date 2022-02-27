@@ -3,6 +3,7 @@ package com.github.kaushiknishant.URLFeederService.controller;
 import com.github.kaushiknishant.URLFeederService.entity.URL;
 import com.github.kaushiknishant.URLFeederService.service.URLService;
 import com.github.kaushiknishant.URLFeederService.util.Constants;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,22 +15,41 @@ import java.sql.Timestamp;
 import java.util.UUID;
 
 @RestController
+@Slf4j
 class URLController {
 
-    @Autowired
-    private URLService urlService;
+    private final URLService urlService;
 
-    @GetMapping("/ping")
-    public String ping() {
-        return "pong";
+    /*
+    @Autowired
+    private URLService urlService
+    Field-based dependency injection is not recommended
+
+    Disadvantages:
+        ----> Disallows immutable field declaration
+        ----> Eases single responsibility principle violation
+        ----> Tightly coupled with dependency injection container
+        ----> Hidden dependencies
+     */
+
+    @Autowired
+    public URLController(URLService urlService) {
+        this.urlService = urlService;
+    }
+
+    @GetMapping("/")
+    public String home() {
+        log.info("<---- Inside the home() ---> ");
+        return "Welcome to the site. ";
     }
 
     @PostMapping
     public ResponseEntity<Void> submitURL(@RequestBody URL url) {
-        url.setId(Constants.URL_UUID_PREFIX + UUID.randomUUID().toString());
+        log.info("<----Inside the submitURL() ---> ");
+        url.setId(Constants.URL_UUID_PREFIX + UUID.randomUUID());
         url.setCreatedDate(new Timestamp(System.currentTimeMillis()));
+        log.info("URLService save method is used.");
         urlService.save(url);
-        System.out.println(url);
         return ResponseEntity.ok().build();
     }
 }

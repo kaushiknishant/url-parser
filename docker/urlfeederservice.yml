@@ -1,0 +1,11 @@
+version: "3"
+services:
+  urlfeederservice:
+    image: url-feeder-service
+    network_mode: bridge
+    container_name: urlfeederservice
+    ports:
+      - "8085:8085"
+
+
+

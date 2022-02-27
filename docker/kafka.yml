@@ -1,0 +1,21 @@
+version: "3"
+services:
+  zookeeper:
+    image: zookeeper
+    network_mode: bridge
+    container_name: zookeeper
+    ports:
+      - "2181:2181"
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  kafka:
+    image: wurstmeister/kafka
+    network_mode: bridge
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      HOSTNAME_COMMAND: "ifconfig eth0 | grep 'inet addr:' | cut -d: -f2 | awk '{ print $$1}'"
+      KAFKA_ZOOKEEPER_CONNECT: 172.17.0.2:2181
+    depends_on:
+      - zookeeper
